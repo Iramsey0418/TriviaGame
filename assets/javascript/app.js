@@ -1,119 +1,170 @@
-var startScreen;
-var gameHTML;
-var counter = 30;
-var questions = ["Who is this Band?", "?", "Who is this Artists?", "Who is this Musician??"];
-var answers = [["Five Finger Death Punch", "Eminem", "Juicy J", "Project Pat"], ["Big Sean","Queen","Led Zepplin","Papa Roach"], ["Yin Yang Twins", "Franchise Boyz", "Ludacris", "Rick Ross"],["Shinedown","Godsmack","Mudvayne"]];
-var images =[""]
-var correctAnswers = ["A. Five Finger Death Punch", "B. Juicy J", "C. Eminem", "C. Mudvayne", "D. Godsmack", "A. Papa Roach", "B. Shinedown", "D. Rick Ross"];
-var questionCounter = 0;
-var selecterAnswer;
-var theClock;
-var correctTally = 0;
-var incorrectTally = 0;
-var unansweredTally = 0;
+var questions = [{
+	ques: "When was the first Air Max made?",
+	ans: ["2000", "1987", "1995", "1988"],
+	name: "firstAirmax",
+	correct: "1987",
+	divClass: ".firstAirmax"
+},
+{
+	ques: "Nike paid design student, Carolyn Davison, how much for their Swoosh Logo?",
+	ans: ["$1000", "$13", "$100", "$35"],
+	name: "swoosh",
+	correct: "$35",
+	divClass: ".swoosh"
+},
+{
+	ques: "What was the first clothing brand to partner with Nike?",
+	ans: ["Patta", "Undefeated", "Stussy", "Diamond Supply Co."],
+	name: "colab",
+	correct: "Stussy",
+	divClass: ".colab"
+},
+{
+	ques: "Who was Nike's first professional athlete endorser?",
+	ans: ["John McEnroe", "Michael Jordan", "Ilie Nastase", "Steve Prefontaine"],
+	name: "endorser",
+	correct: "Ilie Nastase",
+	divClass: ".endorser"
+},
+{
+	ques: "When was the first Air Force 1 made?",
+	ans: ["1982", "1983", "1984", "1985"],
+	name: "firstForce",
+	correct: "1982",
+	divClass: ".firstForce"
+},
+{
+	ques: "Who designed the Air Max technology?",
+	ans: ["Phil Knight", "Bill Bowerman", "Tinker Hatfield", "Hidefumi Hommyo"],
+	name: "airMaxDesigner",
+	correct: "Tinker Hatfield",
+	divClass: ".airMaxDesigner"
+},
+{
+	ques: "When was the first Air Jordan 1's released to the public?",
+	ans: ["2000", "1987", "1995", "1985"],
+	name: "jordan",
+	correct: "1985",
+	divClass: ".jordan"
+},
+{
+	ques: "Nike's first sneaker design goes under what name today?",
+	ans: ["Air Max 1", " Cortez", "Structure Triax", "Air Force 1"],
+	name: "firstDesign",
+	correct: "Cortez",
+	divClass: ".firstDesign"
+},
+{
+	ques: "Which state was Nike's first retail space was opened in?",
+	ans: ["Oregon", "New York", "California", "Florida"],
+	name: "retailStore",
+	correct: "California",
+	divClass: ".retailStore"
+},
+{
+	ques: "Nike was originally a distribution company for which brand?",
+	ans: ["Adidas", "New Balance", "Saucony", "Onitsuka Tiger"],
+	name: "distribution",
+	correct: "Onitsuka Tiger",
+	divClass: ".distribution"
+}
+] // end questions object
 
-$(document).ready(function() {
-   
-    
-    function initialScreen() {
-        startScreen = "<p class='text-center main-button-container'><a class='btn btn-primary btn-lg btn-block start-button' href='#' role='button'>Start Quiz</a></p>";
-        $(".mainArea").html(startScreen);
-    }
-    
-    initialScreen();
-    
-   
-    
-    $("body").on("click", ".start-button", function(event){
-        event.preventDefault();  
-       
-        
-    
-        });
-     
-    $("body").on("click", ".answer", function(event){
-        
-       
-        selectedAnswer = $(this).text();
-        if(selectedAnswer === correctAnswers[questionCounter]) {
-            
-            clearInterval(theClock);
-            generateWin();
-        }
-        else {
-            
-            clearInterval(theClock);
-            generateLoss();
-        }
-    });
-    $("body").on("click", ".reset-button", function(event){
-        resetGame();
-    });
-}); 
+var labels = ["first", "second", "third", "forth"];
 
-function generateLossDueToTimeOut() {
-	unansweredTally++;
-	gameHTML = "<p class='text-center timer-p'>Time Remaining: <span class='timer'>" + counter + "</span></p>" + "<p class='text-center'>You ran out of time!  The correct answer was: " + correctAnswers[questionCounter] + "</p>" + "<img class='center-block img-wrong' src='img/x.png'>";
-	$(".mainArea").html(gameHTML);
-	setTimeout(wait, 4000);  
+// click to start then display quesions
+var startGame = $("#start-btn").on('click', function() {
+$(this).parent().hide();
+$('.container').show();
+countdown(60);
+questionDisplay();
+});
 
-function generateWin() {
-	correctTally++;
-	gameHTML = "<p class='text-center timer-p'>Time Remaining: <span class='timer'>" + counter + "</span></p>" + "<p class='text-center'>Correct! The answer is: " + correctAnswers[questionCounter] + "</p>" + imageArray[questionCounter];
-	$(".mainArea").html(gameHTML);
-	setTimeout(wait, 4000);  
+// function for displaying questions
+var questionDisplay = function() {
+$(".questions :not('#sub-but')").empty();
+// loops through the 10 questions 
+for (var j = 0; j < 10; j++) {
+$('.questions').prepend('<div class="' + questions[j].name + '"></div>');
+$(questions[j].divClass).append('<div class ="ques-title">' + questions[j].ques + '</div>');
+// loops through answers for each radio button
+for (var i = 0; i <= 3; i++) {
+	$(questions[j].divClass).append('<input type="radio"  name="' + questions[j].name + '" value="' + questions[j].ans[i] + '"/><label for="' + labels[i] + '">' + questions[j].ans[i] + '</label>');
+}
+$('.questions').prepend('<hr />');
+}
 }
 
-function generateLoss() {
-	incorrectTally++;
-	gameHTML = "<p class='text-center timer-p'>Time Remaining: <span class='timer'>" + counter + "</span></p>" + "<p class='text-center'>Wrong! The correct answer is: "+ correctAnswers[questionCounter] + "</p>" + "<img class='center-block img-wrong' src='img/x.png'>";
-	$(".mainArea").html(gameHTML);
-	setTimeout(wait, 4000); 
-}
 
-function generateHTML() {
-	gameHTML = "<p class='text-center timer-p'>Time Remaining: <span class='timer'>30</span></p><p class='text-center'>" + question[questionCounter] + "</p><p class='first-answer answer'>A. " + answer[questionCounter][0] + "</p><p class='answer'>B. "+answer[questionCounter][1]+"</p><p class='answer'>C. "+answer[questionCounter][2]+"</p><p class='answer'>D. "+answer[questionCounter][3]+"</p>";
-	$(".mainArea").html(gameHTML);
-}
+// function for countdown timer
+var countdown = function(seconds) {
 
-function wait() {
-	if (questionCounter < 7) {
-	questionCounter++;
-	generateHTML();
-	counter = 30;
-	timerWrapper();
+var timer = setInterval(function() {
+seconds = seconds - 1;
+$("#time-remain").html(seconds);
+
+if (seconds <= 0) {
+	$('.container').fadeOut(500);
+	var correctAnswers = 0;
+	var wrongAnswers = 0;
+	var unAnswered = 0;
+
+	// loop through correctArray & radioName to match html elements & answers
+	for (var i = 0; i < 10; i++) {
+
+		if ($('input:radio[name="' + questions[i].name + '"]:checked').val() === questions[i].correct) {
+
+			correctAnswers++;
+			console.log("this is correct! number:" + i)
+		} else {
+			wrongAnswers++;
+			console.log("this is wrong! number:" + i)
+		};
 	}
-	else {
-		finalScreen();
-	}
-}
+	$('#correctTimesUp').append(correctAnswers);
+	// display wrongAnswers
+	$('#wrongTimesUp').append(wrongAnswers);
+	$('#timesUp').fadeIn(1000).show();
 
-function timerWrapper() {
-	theClock = setInterval(thirtySeconds, 1000);
-	function thirtySeconds() {
-		if (counter === 0) {
-			clearInterval(theClock);
-			generateLossDueToTimeOut();
-		}
-		if (counter > 0) {
-			counter--;
-		}
-		$(".timer").html(counter);
-	}
+	// alert("Times Up!");
+	clearInterval(timer);
+	return;
 }
+}, 1000);
 
-function finalScreen() {
-	gameHTML = "<p class='text-center timer-p'>Time Remaining: <span class='timer'>" + counter + "</span></p>" + "<p class='text-center'>How'd you do?" + "</p>" + "<p class='summary-correct'>Correct: " + correctTally + "</p>" + "<p>Wrong: " + incorrectTally + "</p>" + "<p>Unanswered: " + unansweredTally + "</p>" + "<p class='text-center reset-button-container'><a class='btn btn-primary btn-lg btn-block reset-button' href='#' role='button'>Try Again?!</a></p>";
-	$(".mainArea").html(gameHTML);
-}
+// click event for submit button to stop timer
+$('#sub-but').on('click', function() {
+clearInterval(timer);
+})
+}; // end countdown
 
-function resetGame() {
-	questionCounter = 0;
-	correctTally = 0;
-	incorrectTally = 0;
-	unansweredTally = 0;
-	counter = 30;
-	generateHTML();
-	timerWrapper();
-}
-}
+
+// function to grade quiz once submit button is clicked
+var gradeQuiz = $('#sub-but').on('click', function() {
+
+var correctAnswers = 0;
+var wrongAnswers = 0;
+var unAnswered = 0;
+
+// loop through correctArray & radioName to match html elements & answers
+for (var i = 0; i < 10; i++) {
+
+if ($('input:radio[name="' + questions[i].name + '"]:checked').val() === questions[i].correct) {
+
+	correctAnswers++;
+} else {
+	wrongAnswers++;
+};
+};
+
+countdown();
+// fade out questions
+$('.container').fadeOut(500);
+// show answerScreen
+$('#answerScreen').show();
+// display correctAnswers
+$('#correctScreen').append(correctAnswers);
+// display wrongAnswers
+$('#wrongScreen').append(wrongAnswers);
+
+});
